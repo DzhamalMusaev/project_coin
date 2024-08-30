@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Монетка</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f4f4f9;
+        }
+        .login-section {
+            display: flex;
+            flex-direction: column;
+            align-items: center; 
+        }
+        .hidden {
+            display: none;
+        }
+        .coin {
+            width: 100px;
+            height: 100px;
+            background-image: url('/img/coin.png'); /* Замените на URL вашей картинки монеты */
+            background-size: cover;
+            border-radius: 50%;
+        }
+        .coin:active {
+            transform: scale(0.95);
+        }
+        .button {
+            padding: 10px 20px;
+            margin: 10px;
+            border: none;
+            background-color: #007BFF;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: background-color 0.3s, transform 0.1s;
+        }
+        .button:active {
+            transform: scale(0.95);
+        }
+        .button:hover {
+            background-color: #0056b3;
+        }
+        .promo-section, .upgrade-section, .balance-section {
+            text-align: center;
+        }
+        #username {
+            margin: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-section">
+        <input type="text" id="username" placeholder="Введите логин">
+        <button class="button" id="login-button">Войти</button>
+    </div>
+    <div class="main-content hidden">
+        <div class="user-section">
+            <h2>Пользователь: <span id="user-display"></span></h2>
+        </div>
+        <div class="coin" id="coin"></div>
+        <div class="balance-section">
+            <h3>Баланс: <span id="balance">0</span></h3>
+        </div>
+        <div class="upgrade-section">
+            <button class="button" id="upgrade-button">Увеличить за 100</button>
+        </div>
+        <div class="promo-section">
+            <input type="text" id="promo-code" placeholder="Введите промокод">
+            <button class="button" id="promo-button">Активировать</button>
+        </div>
+    </div>
+    <script>
+        let balance = 0;
+        let clickValue = 1;
+        const upgradePrices = [100, 300, 500, 700, 1000, 1200, 1500, 2000, 3000, 4500, 5000];
+        let upgradeIndex = 0;
+        let clickCount = 0;
+        let promoUsed = false;
+
+        document.getElementById('login-button').addEventListener('click', function() {
+            const username = document.getElementById('username').value.trim();
+            if (username) {
+                document.getElementById('user-display').textContent = username;
+                document.querySelector('.login-section').classList.add('hidden');
+                document.querySelector('.main-content').classList.remove('hidden');
+            }
+        });
+
+        document.getElementById('coin').addEventListener('click', function() {
+            clickCount++;
+            if (clickCount >= 5) {
+                clickValue += 3;
+                clickCount = 0;
+            }
+            balance += clickValue;
+            updateBalance();
+        });
+
+        document.getElementById('upgrade-button').addEventListener('click', function() {
+            const upgradeCost = upgradePrices[upgradeIndex];
+            if (balance >= upgradeCost) {
+                balance -= upgradeCost;
+                updateBalance();
+                clickValue++;
+                upgradeIndex++;
+                if (upgradeIndex < upgradePrices.length) {
+                    this.textContent = `Увеличить за ${upgradePrices[upgradeIndex]}`;
+                } else {
+                    this.disabled = true;
+                    this.textContent = "Все улучшения куплены";
+                }
+            }
+        });
+
+        document.getElementById('promo-button').addEventListener('click', function() {
+            const promoCode = document.getElementById('promo-code').value.trim();
+            if (promoCode === 'Dogcoin' === 'BONUS' && !promoUsed) {
+                balance += 3500;
+                updateBalance();
+                promoUsed = true;
+                alert('Промокод успешно активирован!');
+            } else {
+                alert('Неправильный промокод или промокод уже использован');
+            }
+            document.getElementById('promo-code').value = '';
+        });
+
+        function updateBalance() {
+            document.getElementById('balance').textContent = balance;
+            
+        }
+    </script>
+</body>
+</html>
