@@ -1,0 +1,2 @@
+# project_coin
+Dogcoin
